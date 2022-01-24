@@ -1,6 +1,6 @@
 locals {
 
-  project_id       = "PROYECT_ID"
+  project_id       = "PROJECT_ID"
   region           = "REGION"
   zone             = "ZONE"
   image            = "IMAGE_NAME"

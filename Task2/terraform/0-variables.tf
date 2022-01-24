@@ -1,6 +1,6 @@
 locals {
 
-  project_id       = "PROYECT_ID"
+  project_id       = "test-339001"
   region           = "us-central1"
   zone             = "us-central1-a"
   image            = "ubuntu-2004-focal-v20211212"
