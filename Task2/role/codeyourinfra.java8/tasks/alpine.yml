@@ -1,4 +1,0 @@
----
-- name: Install latest OpenJDK 8
-  apk:
-    name: openjdk8

@@ -1,4 +1,0 @@
----
-- name: Install latest OpenJDK 8
-  yum:
-    name: java-1.8.0-openjdk
