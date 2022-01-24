@@ -1,0 +1,10 @@
+locals {
+
+  project_id    = "PROJECT_ID"
+  region        = "REGION"
+  credentials   = "CREDENCIALS"
+  gke_username  = "GKE_USERNAME"
+  gke_password  = "GKE_PASSWORD"
+  gke_num_nodes = GKE_NUM_NODES
+
+}
