@@ -63,7 +63,6 @@ gke_image() {
   
   echo Y | $GCLOUD_BIN auth configure-docker
 
-  #$GCLOUD_BIN container clusters create $GCLOUD_CLUSTER_NAME --num-nodes $GCLOUD_NUM_NODES --zone $GCLOUD_ZONE
   echo $GCLOUD_IMAGE_NAME:$GCLOUD_IMAGE_TAG
   cd $TASK1_WORKDIR/api \
 	  && $GCLOUD_BIN builds submit --tag $GCLOUD_IMAGE_NAME:$GCLOUD_IMAGE_TAG \
@@ -86,10 +85,7 @@ init() {
     help
     exit 0;
   }
-#  test -e "$GCLOUD_BIN" || { echo gcloud is not installed;
-#    help
-#    exit 0;
-#  }
+
   test "$GCLOUD_CLUSTER_NAME" || { echo GCLOUD_CLUSTER_NAME is not defined;
     help
     exit 0;
@@ -124,13 +120,6 @@ create() {
   gke_image
 }
 
-prueba() {
-  init
-  #gke_terraform 
-  gke_image
-  #destroy
-}
-
 
 case "$1" in
   "destroy" ) echo "call destroy ..." && destroy
@@ -138,8 +127,6 @@ case "$1" in
   "create" ) echo "call create ..." && create
 	  ;;
   "output" ) echo "call output ..." && output
-	  ;;
-  "prueba" ) echo "call prueba ..." && prueba
 	  ;;
   *) echo "exit" && help 
 esac

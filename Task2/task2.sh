@@ -1,17 +1,16 @@
 #!/usr/bin/sh
 
-#
-export ANSIBLE_HOST_KEY_CHECKING=False
-
 # env
-GOOGLE_APPLICATION_CREDENTIALS="/tmp/sa1-294.json" #!!!!!!!!!!! MANDATORY
+GOOGLE_APPLICATION_CREDENTIALS="/tmp/test_challenge_key.json" #!!!!!!!!!!! MANDATORY
 
 # requisites
 GCLOUD_PROJECT_NAME=$(cat $GOOGLE_APPLICATION_CREDENTIALS | grep project_id | cut -d\" -f 4)
-CHALLENGE2_WORKDIR=$(pwd)
+TASK2_WORKDIR=$(pwd)
 GCLOUD_BIN=$(which gcloud)
 PYTHON3_BIN=$(which python3)
 PIP_BIN=$(which pip)
+TERRAFORM_BIN=$(which terraform)
+KUBECTL_BIN=kubectl
 
 # necessary
 GCLOUD_ZONE="us-central1-a"
@@ -19,7 +18,7 @@ GCLOUD_ZONE="us-central1-a"
 # output
 output() {
   echo "Settings : "
-  echo " CHALLENGE2_WORKDIR = $CHALLENGE2_WORKDIR"
+  echo " TASK2_WORKDIR = $TASK2_WORKDIR"
   echo " GOOGLE_APPLICATION_CREDENTIALS = $GOOGLE_APPLICATION_CREDENTIALS"
   echo " GCLOUD_BIN = $GCLOUD_BIN"
   echo " GCLOUD_ZONE = $GCLOUD_ZONE"
@@ -43,7 +42,7 @@ help() {
 create_instance_gcloud() {
   echo "create_instance ..."
 
-  cd $CHALLENGE2_WORKDIR
+  cd $TASK2_WORKDIR
   
   #roles
   ansible-galaxy role install -r requirements.yml -p role
