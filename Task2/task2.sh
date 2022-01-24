@@ -49,11 +49,6 @@ help() {
 # 
 create_instance_terraform() {
   echo "create_instance ..."
-
-  cd $TASK2_WORKDIR
-  
-  #roles
-  ansible-galaxy role install -r requirements.yml -p role
  
   sed -e "s@PROJECT_ID@$GCLOUD_PROJECT_NAME@g" -e "s@REGION@$GCLOUD_REGION@g" -e "s@ZONE@$GCLOUD_ZONE@g" -e "s@MACHINE@$GCLOUD_MACHINE@g" -e "s@IMAGE_NAME@$GCLOUD_IMAGE@g" -e "s@CREDENCIALS@$GOOGLE_APPLICATION_CREDENTIALS@g" -e "s@SSH_USER@$GCLOUD_SSH_USER@g" -e "s@SSH_KEY_PATH@$GCLOUD_SSH_KEY_PATH@g" -e "s@GKE_NUM_NODES@$GCLOUD_NUM_NODES@g" $TASK2_WORKDIR/terraform/0-variables.tf.template > $TASK2_WORKDIR/terraform/0-variables.tf
   $TERRAFORM_BIN -chdir=$TASK2_WORKDIR/terraform fmt
@@ -65,10 +60,13 @@ create_instance_terraform() {
 
 ansible_apply_jenkins() {
   echo "ansible apply jenkins app ..."
+  
+  #roles
+  ansible-galaxy role install -r requirements.yml -p role
 
   IP=$(gcloud compute instances describe vm-linux --zone $GCLOUD_ZONE --format='get(networkInterfaces[0].accessConfigs[0].natIP)')
   echo $IP
-  sed -e "s;IP;$IP;g" hosts.template > hosts
+  sed -e "s;IP;$IP;g" -e "s@SSH_USER@$GCLOUD_SSH_USER@g" -e "s@SSH_KEY_PATH@$GCLOUD_SSH_KEY_PATH@g" hosts.template > hosts
   ansible-playbook -i hosts -v playbook_install_jenkins.yaml
   gcloud compute --project=$GCLOUD_PROJECT_NAME firewall-rules create custom-allow-jenkins --description="Jenkins TCP 8080" --direction=INGRESS --priority=1000 --network=default --action=ALLOW --rules=tcp:8080 --source-ranges=0.0.0.0/0 --target-tags=ansible
 }
@@ -104,6 +102,8 @@ destroy() {
   #vm
   $TERRAFORM_BIN -chdir=$TASK2_WORKDIR/terraform destroy -auto-approve
   echo Y | gcloud compute --project=$GCLOUD_PROJECT_NAME firewall-rules delete custom-allow-jenkins
+
+  rm -rf $TASK2_WORKDIR/role
 }
 
 # create

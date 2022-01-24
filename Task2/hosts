@@ -1,2 +1,2 @@
 [instances]
-vm1 ansible_ssh_host=34.136.242.95 ansible_ssh_port=22 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/vagrant/.ssh/google_compute_engine
+vm-linux ansible_ssh_host=35.239.41.35 ansible_ssh_port=22 ansible_ssh_user=ansible ansible_ssh_private_key_file=/tmp/id_rsa.pub

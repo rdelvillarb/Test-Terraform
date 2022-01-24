@@ -1,5 +1,5 @@
 - name: Configure Jenkins
-  hosts: vm1
+  hosts: vm-linux
   become: yes
   vars:
     - jenkins_http_port: 8080
