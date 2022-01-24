@@ -13,7 +13,13 @@ TERRAFORM_BIN=$(which terraform)
 KUBECTL_BIN=kubectl
 
 # necessary
+GCLOUD_REGION="us-central1"
 GCLOUD_ZONE="us-central1-a"
+GCLOUD_IMAGE="ubuntu-2004-focal-v20211212"
+GCLOUD_MACHINE="n1-standard-1"
+GCLOUD_SSH_USER="ansible"
+GCLOUD_NUM_NODES=1
+
 
 # output
 output() {
@@ -47,19 +53,18 @@ create_instance_gcloud() {
   #roles
   ansible-galaxy role install -r requirements.yml -p role
 
-  #vm
-  SA_ACCOUNT_MAIL=$(cat $GOOGLE_APPLICATION_CREDENTIALS | grep client_email | cut -d\" -f 4)
-  SA_ACCOUNT_PROJECT=$(cat $GOOGLE_APPLICATION_CREDENTIALS | grep project | cut -d\" -f 4)
-  SA_ACCOUNT_FILE=$GOOGLE_APPLICATION_CREDENTIALS
-  sed -e "s;SA_ACCOUNT_MAIL;$SA_ACCOUNT_MAIL;g" -e "s;SA_ACCOUNT_PROJECT;$SA_ACCOUNT_PROJECT;g" -e "s;SA_ACCOUNT_FILE;$SA_ACCOUNT_FILE;g" gce-instances-create.yaml.template > gce-instances-create.yaml
-  ansible-playbook -e instances="vm1" -vv gce-instances-create.yaml
+ 
+  sed -e "s@PROJECT_ID@$GCLOUD_PROJECT_NAME@g" -e "s@REGION@$GCLOUD_REGION@g" -e "s@ZONE@$GCLOUD_ZONE@g -e "s@MACHINE@$GCLOUD_MACHINE@g -e "s@IMAGE_NAME@$GCLOUD_IMAGE@g -e "s@CREDENCIALS@$GOOGLE_APPLICATION_CREDENTIALS@g" -e "s@SSH_USER@$GCLOUD_SSH_USER@g" -e "s@GKE_NUM_NODES@$GCLOUD_NUM_NODES@g" $TASK2_WORKDIR/terraform/0-variables.tf.template > $TASK2_WORKDIR/terraform/0-variables.tf
+  $TERRAFORM_BIN -chdir=$TASK2_WORKDIR/terraform fmt
+  $TERRAFORM_BIN -chdir=$TASK2_WORKDIR/terraform init
+  $TERRAFORM_BIN -chdir=$TASK2_WORKDIR/terraform apply -auto-approve
 
 }
 
 ansible_apply_jenkins() {
   echo "ansible apply jenkins app ..."
 
-  IP=$(gcloud compute instances describe vm1 --zone $GCLOUD_ZONE --format='get(networkInterfaces[0].accessConfigs[0].natIP)')
+  IP=$(gcloud compute instances describe vm-linux --zone $GCLOUD_ZONE --format='get(networkInterfaces[0].accessConfigs[0].natIP)')
   echo $IP
   sed -e "s;IP;$IP;g" hosts.template > hosts
   ansible-playbook -i hosts -v playbook_install_jenkins.yaml
@@ -104,11 +109,7 @@ destroy() {
   init
   
   #vm
-  SA_ACCOUNT_MAIL=$(cat $GOOGLE_APPLICATION_CREDENTIALS | grep client_email | cut -d\" -f 4)
-  SA_ACCOUNT_PROJECT=$(cat $GOOGLE_APPLICATION_CREDENTIALS | grep project | cut -d\" -f 4)
-  SA_ACCOUNT_FILE=$GOOGLE_APPLICATION_CREDENTIALS
-  sed -e "s;SA_ACCOUNT_MAIL;$SA_ACCOUNT_MAIL;g" -e "s;SA_ACCOUNT_PROJECT;$SA_ACCOUNT_PROJECT;g" -e "s;SA_ACCOUNT_FILE;$SA_ACCOUNT_FILE;g" gce-instances-delete.yaml.template > gce-instances-delete.yaml
-  ansible-playbook -e instances="vm1" -vv gce-instances-delete.yaml
+  $TERRAFORM_BIN -chdir=$TASK2_WORKDIR/terraform destroy -auto-approve
   echo Y | gcloud compute --project=$GCLOUD_PROJECT_NAME firewall-rules delete custom-allow-jenkins
 }
 

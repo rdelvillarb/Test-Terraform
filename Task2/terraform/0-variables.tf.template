@@ -6,7 +6,7 @@ locals {
   image            = "IMAGE_NAME"
   machine          = "MACHINE"
   private_key_path = "id_rsa.pub"
-  ssh_user         = "SSH-USER"
+  ssh_user         = "SSH_USER"
   gke_num_nodes    = GKE_NUM_NODES    
 
 }
