@@ -45,7 +45,7 @@ help() {
 }
 
 # 
-create_instance_gcloud() {
+create_instance_terraform() {
   echo "create_instance ..."
 
   cd $TASK2_WORKDIR
@@ -60,6 +60,7 @@ create_instance_gcloud() {
   $TERRAFORM_BIN -chdir=$TASK2_WORKDIR/terraform apply -auto-approve
 
 }
+
 
 ansible_apply_jenkins() {
   echo "ansible apply jenkins app ..."
@@ -80,16 +81,6 @@ init() {
     exit 0;
   }
   test -e "$GCLOUD_BIN" || { echo gcloud is not installed;
-    help
-    exit 0;
-  }
-
-  # python3 && pip
-  [ $($PYTHON3_BIN --version | grep "Python 3.*" | wc -l) -eq "1" ] || { echo python3 is not installed;
-    help
-    exit 0;
-  }
-  [ $($PIP_BIN --version | grep "python" | wc -l) -eq "1" ] || { echo pip is not installed;
     help
     exit 0;
   }
@@ -116,7 +107,7 @@ destroy() {
 # create
 create() {
   init
-  create_instance_gcloud # with gcloud
+  create_instance_terraform 
   ansible_apply_jenkins 
 }
 
