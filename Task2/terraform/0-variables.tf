@@ -1,12 +1,13 @@
 locals {
 
-  project_id       = "test-339001"
+  project_id       = "PROYECT_ID"
   region           = "us-central1"
   zone             = "us-central1-a"
   image            = "ubuntu-2004-focal-v20211212"
   machine          = "n1-standard-1"
-  private_key_path = "id_rsa.pub"
+  credentials      = "/tmp/test_challenge_key.json"
   ssh_user         = "ansible"
-  gke_num_nodes    = 2
+  private_key_path = "/tmp/id_rsa.pub"
+  gke_num_nodes    = 1
 
 }

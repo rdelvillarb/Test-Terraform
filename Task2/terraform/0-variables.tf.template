@@ -5,8 +5,9 @@ locals {
   zone             = "ZONE"
   image            = "IMAGE_NAME"
   machine          = "MACHINE"
-  private_key_path = "id_rsa.pub"
+  credentials 	   = "CREDENCIALS"
   ssh_user         = "SSH_USER"
+  private_key_path = "SSH_KEY_PATH"
   gke_num_nodes    = GKE_NUM_NODES    
 
 }

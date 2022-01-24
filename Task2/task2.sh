@@ -18,6 +18,8 @@ GCLOUD_ZONE="us-central1-a"
 GCLOUD_IMAGE="ubuntu-2004-focal-v20211212"
 GCLOUD_MACHINE="n1-standard-1"
 GCLOUD_SSH_USER="ansible"
+GCLOUD_SSH_KEY_PATH="/tmp/id_rsa.pub"
+SSH_KEY_PATH
 GCLOUD_NUM_NODES=1
 
 
@@ -52,9 +54,8 @@ create_instance_terraform() {
   
   #roles
   ansible-galaxy role install -r requirements.yml -p role
-
  
-  sed -e "s@PROJECT_ID@$GCLOUD_PROJECT_NAME@g" -e "s@REGION@$GCLOUD_REGION@g" -e "s@ZONE@$GCLOUD_ZONE@g -e "s@MACHINE@$GCLOUD_MACHINE@g -e "s@IMAGE_NAME@$GCLOUD_IMAGE@g -e "s@CREDENCIALS@$GOOGLE_APPLICATION_CREDENTIALS@g" -e "s@SSH_USER@$GCLOUD_SSH_USER@g" -e "s@GKE_NUM_NODES@$GCLOUD_NUM_NODES@g" $TASK2_WORKDIR/terraform/0-variables.tf.template > $TASK2_WORKDIR/terraform/0-variables.tf
+  sed -e "s@PROJECT_ID@$GCLOUD_PROJECT_NAME@g" -e "s@REGION@$GCLOUD_REGION@g" -e "s@ZONE@$GCLOUD_ZONE@g" -e "s@MACHINE@$GCLOUD_MACHINE@g" -e "s@IMAGE_NAME@$GCLOUD_IMAGE@g" -e "s@CREDENCIALS@$GOOGLE_APPLICATION_CREDENTIALS@g" -e "s@SSH_USER@$GCLOUD_SSH_USER@g" -e "s@SSH_KEY_PATH@$GCLOUD_SSH_KEY_PATH@g" -e "s@GKE_NUM_NODES@$GCLOUD_NUM_NODES@g" $TASK2_WORKDIR/terraform/0-variables.tf.template > $TASK2_WORKDIR/terraform/0-variables.tf
   $TERRAFORM_BIN -chdir=$TASK2_WORKDIR/terraform fmt
   $TERRAFORM_BIN -chdir=$TASK2_WORKDIR/terraform init
   $TERRAFORM_BIN -chdir=$TASK2_WORKDIR/terraform apply -auto-approve
@@ -84,6 +85,7 @@ init() {
     help
     exit 0;
   }
+
 
   echo "Environment ... "
   output

@@ -2,7 +2,7 @@
 # Google Cloud Platform Provider
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs
 provider "google" {
-  credentials = file("admin_prueba_key.json")
+  credentials = file(local.credentials)
   project     = local.project_id
   region      = local.region
 }
